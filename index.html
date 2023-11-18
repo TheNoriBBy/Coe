@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coe V1 - Token Generator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="tokenDisplay"></h1>
+<p id="countdown"></p>
+
+<script>
+    // Function to generate a random token
+    function generateToken() {
+        const token = Math.random().toString(36).substr(2);
+        const timestamp = new Date().getTime();
+        localStorage.setItem('generatedToken', JSON.stringify({ token, timestamp }));
+        return { token, timestamp };
+    }
+
+    // Function to update the token display
+    function updateTokenDisplay(token) {
+        const tokenDisplay = document.getElementById('tokenDisplay');
+        tokenDisplay.textContent = token;
+    }
+
+    // Function to update the countdown clock
+    function updateCountdownClock(endTime) {
+        const countdown = document.getElementById('countdown');
+
+        function update() {
+            const currentTime = new Date().getTime();
+            const timeRemaining = endTime - currentTime;
+
+            if (timeRemaining > 0) {
+                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                countdown.textContent = `Time remaining: ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                countdown.textContent = 'Token has expired.';
+            }
+        }
+
+        // Update every second
+        setInterval(update, 1000);
+        update(); // Initial update
+    }
+
+    // Check if the URL contains a token parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
+
+    if (tokenParam) {
+        // Check if the provided token is valid
+        const storedToken = localStorage.getItem('generatedToken');
+        if (storedToken) {
+            const { token, timestamp } = JSON.parse(storedToken);
+            const isValid = isTokenValid(timestamp);
+            
+            if (isValid) {
+                // Display the token
+                updateTokenDisplay(token);
+
+                // Calculate the end time for the countdown
+                const endTime = timestamp + (60 * 60 * 1000); // 1 hour in milliseconds
+                updateCountdownClock(endTime);
+            } else {
+                console.log('Token is not valid.');
+            }
+        }
+    } else {
+        // Generate a new token and save it
+        const { token, timestamp } = generateToken();
+        updateTokenDisplay(token);
+
+        // Calculate the end time for the countdown
+        const endTime = timestamp + (60 * 60 * 1000); // 1 hour in milliseconds
+        updateCountdownClock(endTime);
+    }
+</script>
+
+</body>
+</html>
