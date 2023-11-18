@@ -30,6 +30,14 @@
         return { token, timestamp };
     }
 
+    // Function to check if the token is valid within 1 hour
+    function isTokenValid(timestamp) {
+        const currentTime = new Date().getTime();
+        const oneHourInMilliseconds = 60 * 60 * 1000; // 1 hour in milliseconds
+
+        return currentTime - timestamp < oneHourInMilliseconds;
+    }
+
     // Function to update the token display
     function updateTokenDisplay(token) {
         const tokenDisplay = document.getElementById('tokenDisplay');
