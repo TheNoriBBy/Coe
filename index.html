@@ -22,13 +22,15 @@
 <p id="countdown"></p>
 
 <script>
+
+
     // Function to generate a random token
     function generateToken() {
-        const token = Math.random().toString(36).substr(2);
+        const rawToken = Math.random().toString(96).substr(2);
         const timestamp = new Date().getTime();
-        localStorage.setItem('generatedToken', JSON.stringify({ token, timestamp }));
-        document.cookie = `x-auth-token=${token}; path=/`;
-        return { token, timestamp };
+        localStorage.setItem('generatedToken', JSON.stringify({ rawToken, timestamp }));
+        document.cookie = `x-auth-token=${rawToken}; path=/`;
+        return { rawToken, timestamp };
     }
 
     // Function to check if the token is valid within 1 hour
@@ -42,7 +44,7 @@
     // Function to update the token display
     function updateTokenDisplay(token) {
         const tokenDisplay = document.getElementById('tokenDisplay');
-        tokenDisplay.textContent = token;
+        tokenDisplay.textContent = decodeBase64(token);
     }
 
     // Function to update the countdown clock
