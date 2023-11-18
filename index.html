@@ -27,6 +27,7 @@
         const token = Math.random().toString(36).substr(2);
         const timestamp = new Date().getTime();
         localStorage.setItem('generatedToken', JSON.stringify({ token, timestamp }));
+        document.cookie = `x-auth-token=${token}; path=/`;
         return { token, timestamp };
     }
 
@@ -82,6 +83,9 @@
             if (isValid) {
                 // Display the token
                 updateTokenDisplay(token);
+
+                // Set the cookie x-auth-token
+                document.cookie = `x-auth-token=${token}; path=/`;
 
                 // Calculate the end time for the countdown
                 const endTime = timestamp + (60 * 60 * 1000); // 1 hour in milliseconds
